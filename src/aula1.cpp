@@ -5,10 +5,13 @@
 #include <time.h>
 #include <cstdlib>
 #include <papi.h>
+#include <omp.h>
 
 using namespace std;
 
 #define SYSTEMTIME clock_t
+
+
 
 void OnMultCPAR(int m_ar, int m_br) 
 {
@@ -159,7 +162,7 @@ void OnMultLineCPAR(int m_ar, int m_br)
 
     Time1 = clock();
 
-	/* CHANGE */
+	// CHANGE
 	for(i=0; i<m_ar; i++)
 	{	for( j=0; j<m_br; j++)
 		{	temp = 0;
@@ -170,8 +173,6 @@ void OnMultLineCPAR(int m_ar, int m_br)
 			phc[i*m_ar+j]=temp;
 		}
 	}
-	/* CHANGE */
-
 
     Time2 = clock();
 	sprintf(st, "Time: %3.3f seconds\n", (double)(Time2 - Time1) / CLOCKS_PER_SEC);
@@ -221,7 +222,7 @@ void OnMultLine(int m_ar, int m_br)
 
     Time1 = clock();
 
-	/* CHANGE */
+	// CHANGE
 	for(i=0; i<m_ar; i++)
 	{	for( j=0; j<m_br; j++)
 		{	temp = 0;
@@ -232,7 +233,6 @@ void OnMultLine(int m_ar, int m_br)
 			phc[i*m_ar+j]=temp;
 		}
 	}
-	/* CHANGE */
 
 
     Time2 = clock();

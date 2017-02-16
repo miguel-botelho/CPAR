@@ -11,7 +11,14 @@ using namespace std;
 
 #define SYSTEMTIME clock_t
 
-
+void transpose(float *src, float *dst, int N, int M) {
+    #pragma omp parallel for
+    for(int n = 0; n<N*M; n++) {
+        int i = n/N;
+        int j = n%N;
+        dst[n] = src[M*j + i];
+    }
+}
 
 void OnMultCPAR(int m_ar, int m_br) 
 {
@@ -200,12 +207,12 @@ void OnMultLine(int m_ar, int m_br)
 	double temp;
 	int i, j, k;
 
-	double *pha, *phb, *phc;
+	double *pha, *phb, *phc, *phb_transp;
 	
-
 		
     pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
+	phb_transp = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
 	for(i=0; i<m_ar; i++)
@@ -228,7 +235,7 @@ void OnMultLine(int m_ar, int m_br)
 		{	temp = 0;
 			for( k=0; k<m_ar; k++)
 			{	
-				temp += pha[i*m_ar+k] * phb[k*m_br+j];
+				temp += pha[i*m_ar+k] * phb_transp[k*j+m_br];
 			}
 			phc[i*m_ar+j]=temp;
 		}
@@ -253,17 +260,6 @@ void OnMultLine(int m_ar, int m_br)
 }
 
 
-float produtoInterno(float *v1, float *v2, int col)
-{
-	int i;
-	float soma=0.0;	
-
-	for(i=0; i<col; i++)
-		soma += v1[i]*v2[i];
-	
-	return(soma);
-
-}
 
 void handle_error (int retval)
 {

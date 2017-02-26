@@ -29,12 +29,12 @@ int main (int argc, char *argv[])
 
 	char c;
 	int lin, col, nt=1;
-	int op;
-	
+	int op,nthreads;
+
 	int EventSet = PAPI_NULL;
   	long long values[2];
   	int ret;
-	
+
 
 	ret = PAPI_library_init( PAPI_VER_CURRENT );
 	if ( ret != PAPI_VER_CURRENT )
@@ -72,17 +72,21 @@ int main (int argc, char *argv[])
 		if (ret != PAPI_OK) cout << "ERRO: Start PAPI" << endl;
 
 		switch (op){
-			case 1: 
+			case 1:
 				OnMult(lin, col);
 				break;
 			case 2:
 				OnMultLine(lin, col);
 				break;
 			case 3:
-				OnMultCPAR(lin, col);
+        cout << "Number of threads? ";
+        cin >> nthreads;
+				OnMultCPAR(lin, col,nthreads);
 				break;
 			case 4:
-				OnMultLineCPAR(lin, col);
+        cout << "Number of threads? ";
+        cin >> nthreads;
+				OnMultLineCPAR(lin, col,nthreads);
 				break;
 		}
 
@@ -93,7 +97,7 @@ int main (int argc, char *argv[])
 
 		ret = PAPI_reset( EventSet );
 		if ( ret != PAPI_OK )
-			std::cout << "FAIL reset" << endl; 
+			std::cout << "FAIL reset" << endl;
 
 
 
@@ -101,11 +105,11 @@ int main (int argc, char *argv[])
 
 		ret = PAPI_remove_event( EventSet, PAPI_L1_DCM );
 		if ( ret != PAPI_OK )
-			std::cout << "FAIL remove event" << endl; 
+			std::cout << "FAIL remove event" << endl;
 
 		ret = PAPI_remove_event( EventSet, PAPI_L2_DCM );
 		if ( ret != PAPI_OK )
-			std::cout << "FAIL remove event" << endl; 
+			std::cout << "FAIL remove event" << endl;
 
 		ret = PAPI_destroy_eventset( &EventSet );
 		if ( ret != PAPI_OK )

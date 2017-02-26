@@ -1,19 +1,19 @@
 #include "multiplication_cpar.h"
 using namespace std;
 
-void OnMultLineCPAR(int m_ar, int m_br)
+void OnMultLineCPAR(int m_ar, int m_br,int nthreads)
 {
-    SYSTEMTIME Time1, Time2;
-	
+  double Time1, Time2;
+
 	char st[100];
 	double temp;
 	int i, j, k;
 
 	double *pha, *phb, *phc;
-	
 
-		
-    pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
+
+
+  pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
@@ -29,22 +29,24 @@ void OnMultLineCPAR(int m_ar, int m_br)
 
 
 
-    Time1 = clock();
+    Time1 = omp_get_wtime();
 
-	// CHANGE
-	for(i=0; i<m_ar; i++)
-	{	for( j=0; j<m_br; j++)
-		{	temp = 0;
-			for( k=0; k<m_ar; k++)
-			{	
-				temp += pha[i*m_ar+k] * phb[k*m_br+j];
-			}
-			phc[i*m_ar+j]=temp;
-		}
-	}
+  for(i=0; i<m_ar; i++)
+  {	for( k=0; k<m_ar; k++)
+    {
+      #pragma omp parallel for num_threads(nthreads)
+      for( j=0; j<m_br; j++)
+      {
+        phc[i*m_ar+j] += pha[i*m_ar+k] * phb[k*m_br+j];
+      }
+    }
+  }
 
-    Time2 = clock();
-	sprintf(st, "Time: %3.3f seconds\n", (double)(Time2 - Time1) / CLOCKS_PER_SEC);
+
+
+
+  Time2 = omp_get_wtime();
+	sprintf(st, "Time: %3.3f seconds\n",Time2 - Time1 );
 	cout << st;
 
 	cout << "Result matrix: " << endl;
@@ -60,20 +62,20 @@ void OnMultLineCPAR(int m_ar, int m_br)
     free(phc);
 }
 
-void OnMultCPAR(int m_ar, int m_br) 
+void OnMultCPAR(int m_ar, int m_br, int nthreads)
 {
-	
+
 	double Time1, Time2;
-	
+
 	char st[100];
 	double temp = 0;
 	int i, j, k;
 
 	double *pha, *phb, *phc;
-	
 
-		
-    pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
+
+
+  pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
@@ -86,15 +88,15 @@ void OnMultCPAR(int m_ar, int m_br)
 			phb[i*m_br + j] = (double)(i+1);
 		}
 
-    Time1 = omp_get_wtime();
-
+  Time1 = omp_get_wtime();
 	for(i=0; i<m_ar; i++) {
 		for( j=0; j<m_br; j++) {
 			temp = 0;
-			#pragma omp parallel for
-			for( k=0; k<m_ar; k++) {	
-				phc[i*m_ar+j] += pha[i*m_ar+k] * phb[k*m_br+j];
+			#pragma omp parallel for reduction(+:temp) num_threads(nthreads)
+			for( k=0; k<m_ar; k++) {
+				temp += pha[i*m_ar+k] * phb[k*m_br+j];
 			}
+      phc[i*m_ar+j]=temp;
 		}
 	}
 
@@ -113,6 +115,6 @@ void OnMultCPAR(int m_ar, int m_br)
     free(pha);
     free(phb);
     free(phc);
-	
-	
+
+
 }

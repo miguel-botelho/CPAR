@@ -11,7 +11,7 @@
 
 #define SYSTEMTIME clock_t
 
-void OnMultLineCPAR(int m_ar, int m_br);
-void OnMultCPAR(int m_ar, int m_br);
+void OnMultLineCPAR(int m_ar, int m_br, int nthreads);
+void OnMultCPAR(int m_ar, int m_br, int nthreads);
 
 #endif

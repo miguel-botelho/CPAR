@@ -1,20 +1,20 @@
 #include "multiplication.h"
 using namespace std;
 
-void OnMult(int m_ar, int m_br) 
+void OnMult(int m_ar, int m_br)
 {
-	
+
 	SYSTEMTIME Time1, Time2;
-	
+
 	char st[100];
 	double temp;
 	int i, j, k;
 
 	double *pha, *phb, *phc;
-	
 
-		
-    pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
+
+
+  pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
@@ -36,7 +36,7 @@ void OnMult(int m_ar, int m_br)
 	{	for( j=0; j<m_br; j++)
 		{	temp = 0;
 			for( k=0; k<m_ar; k++)
-			{	
+			{
 				temp += pha[i*m_ar+k] * phb[k*m_br+j];
 			}
 			phc[i*m_ar+j]=temp;
@@ -58,23 +58,23 @@ void OnMult(int m_ar, int m_br)
     free(pha);
     free(phb);
     free(phc);
-	
-	
+
+
 }
 
 void OnMultLine(int m_ar, int m_br)
 {
 	SYSTEMTIME Time1, Time2;
-	
+
 	char st[100];
 	double temp;
 	int i, j, k;
 
 	double *pha, *phb, *phc;
-	
 
-		
-    pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
+
+
+  pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
 
@@ -86,7 +86,7 @@ void OnMultLine(int m_ar, int m_br)
 		for(j=0; j<m_br; j++)
 			phb[i*m_br + j] = (double)(i+1);
 
-		
+
     Time1 = clock();
 
 
@@ -94,7 +94,7 @@ void OnMultLine(int m_ar, int m_br)
 	{	for( k=0; k<m_ar; k++)
 		{
 			for( j=0; j<m_br; j++)
-			{	
+			{
 				phc[i*m_ar+j] += pha[i*m_ar+k] * phb[k*m_br+j];
 			}
 		}
@@ -102,7 +102,7 @@ void OnMultLine(int m_ar, int m_br)
 
 
 
-    Time2 = clock();
+  Time2 = clock();
 	sprintf(st, "Time: %3.3f seconds\n", (double)(Time2 - Time1) / CLOCKS_PER_SEC);
 	cout << st;
 
@@ -116,5 +116,5 @@ void OnMultLine(int m_ar, int m_br)
 
     free(pha);
     free(phb);
-    free(phc);    
+    free(phc);
 }

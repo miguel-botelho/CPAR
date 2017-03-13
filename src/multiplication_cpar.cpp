@@ -16,6 +16,7 @@ void OnMultLineCPAR(int m_ar, int m_br,int nthreads)
   pha = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phb = (double *)malloc((m_ar * m_ar) * sizeof(double));
 	phc = (double *)malloc((m_ar * m_ar) * sizeof(double));
+      temp = 0;
 
 	for(i=0; i<m_ar; i++)
 		for(j=0; j<m_ar; j++)
@@ -29,12 +30,11 @@ void OnMultLineCPAR(int m_ar, int m_br,int nthreads)
 
 
 
-    Time1 = omp_get_wtime();
-
+  Time1 = omp_get_wtime();
+#pragma omp parallel for private(i,k,j) num_threads(nthreads)
   for(i=0; i<m_ar; i++)
   {	for( k=0; k<m_ar; k++)
     {
-      #pragma omp parallel for num_threads(nthreads)
       for( j=0; j<m_br; j++)
       {
         phc[i*m_ar+j] += pha[i*m_ar+k] * phb[k*m_br+j];
@@ -89,10 +89,11 @@ void OnMultCPAR(int m_ar, int m_br, int nthreads)
 		}
 
   Time1 = omp_get_wtime();
+
+  #pragma omp parallel for private(i,j,k) reduction(+:temp) num_threads(nthreads)
 	for(i=0; i<m_ar; i++) {
 		for( j=0; j<m_br; j++) {
 			temp = 0;
-			#pragma omp parallel for reduction(+:temp) num_threads(nthreads)
 			for( k=0; k<m_ar; k++) {
 				temp += pha[i*m_ar+k] * phb[k*m_br+j];
 			}
